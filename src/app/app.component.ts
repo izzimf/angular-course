@@ -1,18 +1,40 @@
 import { Component } from '@angular/core';
-import { RouterOutlet } from '@angular/router';
-import { CommonModule } from '@angular/common'; // <-- добавили
 
 @Component({
   selector: 'app-root',
-  standalone: true,
-  imports: [RouterOutlet, CommonModule], // <-- добавили CommonModule
   templateUrl: './app.component.html',
   styleUrls: ['./app.component.css']
 })
 export class AppComponent {
-  title = 'angularcoursekbtu';
+  // 1. Interpolation
+  title = 'About Our Team';
+  mission = 'We build delightful software for our users.';
 
-  trackByTitle(index: number, item: { title: string; link: string }): string {
-    return item.title;
+  // 2. Property Binding
+  photoUrl = 'https://angular.io/assets/images/logos/angular/angular.png';
+  isButtonDisabled = false;
+
+  // 3. Event Binding
+  likes = 0;
+  showMessage = false;
+
+  // 4. Two-Way Binding
+  name = '';
+  email = '';
+  subscribed = false;
+
+  // Methods
+  addLike() {
+    this.likes++;
+  }
+
+  toggleMessage() {
+    this.showMessage = !this.showMessage;
+  }
+
+  subscribe() {
+    if (this.email) {
+      this.subscribed = true;
+    }
   }
 }

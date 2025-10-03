@@ -1,0 +1,20 @@
+.container {
+  display: flex;
+  gap: 12px;
+  flex-wrap: wrap;
+  margin: 20px;
+}
+
+.pill-button {
+  padding: 10px 20px;
+  border: none;
+  border-radius: 25px;
+  background-color: #1976d2;
+  color: white;
+  cursor: pointer;
+  transition: background 0.3s;
+}
+
+.pill-button:hover {
+  background-color: #1565c0;
+}
