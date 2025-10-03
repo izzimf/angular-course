@@ -1,20 +1,20 @@
 
-<!-- 1. Interpolation -->
+
 <h1>{{ title }}</h1>
 <p>{{ mission }}</p>
 
-<!-- 2. Property Binding -->
+
 <img [src]="photoUrl" alt="Team Logo" width="250" />
 <br><br>
 
-<!-- 3. Event Binding -->
+
 <p [class.highlight]="likes >= 5">Likes: {{ likes }}</p>
 <button (click)="addLike()">👍 Like</button>
 
 <button (click)="toggleMessage()">Toggle Message</button>
 <p *ngIf="showMessage">Thank you for visiting!</p>
 
-<!-- 4. Two-Way Binding -->
+
 <h3>Greeting</h3>
 <input [(ngModel)]="name" placeholder="Enter your name" />
 <p>Hello, {{ name }}</p>
