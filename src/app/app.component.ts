@@ -11,7 +11,7 @@ export class AppComponent {
   mission = 'We build delightful software for our users.';
 
   // 2. Property Binding
-  photoUrl = 'https://angular.io/assets/images/logos/angular/angular.png';
+  photoUrl = 'https://upload.wikimedia.org/wikipedia/ru/thumb/c/cd/Football_Federation_of_Kazakhstan_Logo.svg/1920px-Football_Federation_of_Kazakhstan_Logo.svg.png';
   isButtonDisabled = false;
 
   // 3. Event Binding

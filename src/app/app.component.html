@@ -4,11 +4,11 @@
 <p>{{ mission }}</p>
 
 <!-- 2. Property Binding -->
-<img [src]="photoUrl" alt="Team Logo" width="150" />
+<img [src]="photoUrl" alt="Team Logo" width="250" />
 <br><br>
 
 <!-- 3. Event Binding -->
-<p>Likes: {{ likes }}</p>
+<p [class.highlight]="likes >= 5">Likes: {{ likes }}</p>
 <button (click)="addLike()">👍 Like</button>
 
 <button (click)="toggleMessage()">Toggle Message</button>
@@ -22,4 +22,7 @@
 <h3>Email Subscription</h3>
 <input [(ngModel)]="email" placeholder="Enter your email" />
 <button (click)="subscribe()" [disabled]="!email">Subscribe</button>
-<p *ngIf="subscribed">Thanks, {{ email }}, we’ll be in touch!</p>
+<p *ngIf="subscribed">Thanks, {{ email }}, now you are my brat</p>
+
+
+

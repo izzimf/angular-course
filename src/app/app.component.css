@@ -18,3 +18,9 @@
 .pill-button:hover {
   background-color: #1565c0;
 }
+
+.highlight {
+  color: red;
+  font-weight: bold;
+  font-size: 18px;
+}
