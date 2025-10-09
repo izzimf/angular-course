@@ -1,0 +1,7 @@
+<h2>Pokémon List</h2>
+
+<button (click)="loadPokemons()">Load Pokémon</button>
+
+<ul>
+  <li *ngFor="let p of pokemons">{{ p.name }}</li>
+</ul>
