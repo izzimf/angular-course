@@ -1,0 +1,32 @@
+<div class="items-list-container">
+  <div class="header-section">
+    <h1>Items Catalog</h1>
+    <div class="search-container">
+      <input
+        type="text"
+        [(ngModel)]="searchQuery"
+        (input)="onSearchChange(searchQuery)"
+        placeholder="Search items..."
+        class="search-input"
+      />
+    </div>
+  </div>
+
+  <div *ngIf="isLoading" class="loading-container">
+    <div class="spinner"></div>
+    <p>Loading items...</p>
+  </div>
+
+  <div *ngIf="error && !isLoading" class="error-container">
+    <p class="error-message">{{ error }}</p>
+  </div>
+
+  <div *ngIf="!isLoading && !error" class="items-grid">
+    <app-item-card *ngFor="let item of items" [item]="item"></app-item-card>
+  </div>
+
+  <div *ngIf="!isLoading && !error && items.length === 0" class="empty-state">
+    <p>No items available. Try adjusting your search.</p>
+  </div>
+</div>
+

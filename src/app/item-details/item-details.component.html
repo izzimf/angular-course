@@ -1,0 +1,93 @@
+<div class="item-details-container">
+  <button (click)="goBack()" class="back-button">← Back to Items</button>
+
+  <div *ngIf="isLoading" class="loading-container">
+    <div class="spinner"></div>
+    <p>Loading item details...</p>
+  </div>
+
+  <div *ngIf="notFound && !isLoading" class="not-found-container">
+    <h2>Item Not Found</h2>
+    <p>The item you're looking for doesn't exist.</p>
+    <button (click)="goBack()" class="btn-primary">Go Back</button>
+  </div>
+
+  <div *ngIf="error && !isLoading && !notFound" class="error-container">
+    <h2>Error</h2>
+    <p class="error-message">{{ error }}</p>
+    <button (click)="goBack()" class="btn-primary">Go Back</button>
+  </div>
+
+  <div *ngIf="item && !isLoading" class="item-details">
+    <div class="item-images">
+      <div class="main-image">
+        <img [src]="item.thumbnail" [alt]="item.title" />
+      </div>
+      <div class="image-gallery" *ngIf="item.images && item.images.length > 0">
+        <img
+          *ngFor="let image of item.images.slice(0, 4)"
+          [src]="image"
+          [alt]="item.title"
+          class="gallery-thumb"
+        />
+      </div>
+    </div>
+
+    <div class="item-info">
+      <h1 class="item-title">{{ item.title }}</h1>
+      <div class="item-meta">
+        <span class="item-brand">{{ item.brand }}</span>
+        <span class="item-category">{{ item.category }}</span>
+      </div>
+
+      <div class="item-rating">
+        <span class="rating-stars">⭐ {{ item.rating }}</span>
+        <span class="item-stock">Stock: {{ item.stock }}</span>
+      </div>
+
+      <div class="item-price-section">
+        <span class="item-price">${{ item.price }}</span>
+        <span *ngIf="item.discountPercentage" class="item-discount">
+          {{ item.discountPercentage }}% off
+        </span>
+      </div>
+
+      <div class="item-description">
+        <h3>Description</h3>
+        <p>{{ item.description }}</p>
+      </div>
+
+      <div class="item-details-grid">
+        <div class="detail-item">
+          <strong>ID:</strong>
+          <span>{{ item.id }}</span>
+        </div>
+        <div class="detail-item">
+          <strong>Brand:</strong>
+          <span>{{ item.brand }}</span>
+        </div>
+        <div class="detail-item">
+          <strong>Category:</strong>
+          <span>{{ item.category }}</span>
+        </div>
+        <div class="detail-item">
+          <strong>Price:</strong>
+          <span>${{ item.price }}</span>
+        </div>
+        <div class="detail-item">
+          <strong>Rating:</strong>
+          <span>{{ item.rating }} ⭐</span>
+        </div>
+        <div class="detail-item">
+          <strong>Stock:</strong>
+          <span>{{ item.stock }} units</span>
+        </div>
+        <div class="detail-item">
+          <strong>Discount:</strong>
+          <span>{{ item.discountPercentage || 0 }}%</span>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+

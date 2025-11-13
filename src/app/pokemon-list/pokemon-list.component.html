@@ -1,0 +1,21 @@
+<div class="container">
+  <h2>🔍 Pokémon Search</h2>
+
+  <input
+    type="text"
+    [(ngModel)]="searchTerm"
+    (input)="onSearchChange(searchTerm)"
+    placeholder="Enter Pokémon name..."
+  />
+
+  <div *ngIf="isLoading" class="loading">Loading...</div>
+
+  <div *ngIf="pokemon" class="card">
+    <h3>{{ pokemon.name | titlecase }}</h3>
+    <img [src]="pokemon.sprites.front_default" alt="{{ pokemon.name }}">
+    <p><strong>Height:</strong> {{ pokemon.height }}</p>
+    <p><strong>Weight:</strong> {{ pokemon.weight }}</p>
+  </div>
+
+  <p *ngIf="error && !isLoading" class="error">{{ error }}</p>
+</div>

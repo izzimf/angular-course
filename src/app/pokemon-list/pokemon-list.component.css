@@ -1,0 +1,43 @@
+.container {
+  text-align: center;
+  margin-top: 40px;
+  font-family: Arial, sans-serif;
+}
+
+input {
+  padding: 10px;
+  width: 260px;
+  border-radius: 8px;
+  border: 1px solid #aaa;
+  margin-bottom: 20px;
+  transition: 0.3s;
+}
+
+input:focus {
+  border-color: #db1f12;
+  outline: none;
+}
+
+.loading {
+  color: #9a2918;
+  font-weight: bold;
+}
+
+.card {
+  display: inline-block;
+  background: #f8f9fa;
+  padding: 20px;
+  border-radius: 12px;
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.2);
+  width: 220px;
+}
+
+.card img {
+  width: 100px;
+  height: 100px;
+}
+
+.error {
+  color: red;
+  font-weight: bold;
+}
