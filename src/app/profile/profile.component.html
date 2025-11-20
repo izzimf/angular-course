@@ -1,0 +1,48 @@
+<div class="profile-container">
+  <div class="profile-card">
+    <h1>User Profile</h1>
+
+    <div *ngIf="isLoading" class="loading-container">
+      <div class="spinner"></div>
+      <p>Loading profile...</p>
+    </div>
+
+    <div *ngIf="user$ | async as user; else noUser">
+      <div class="profile-info">
+        <div class="info-item">
+          <strong>Email:</strong>
+          <span>{{ user.email }}</span>
+        </div>
+        <div class="info-item">
+          <strong>User ID:</strong>
+          <span>{{ user.uid }}</span>
+        </div>
+        <div class="info-item" *ngIf="user.displayName">
+          <strong>Display Name:</strong>
+          <span>{{ user.displayName }}</span>
+        </div>
+        <div class="info-item">
+          <strong>Email Verified:</strong>
+          <span>{{ user.emailVerified ? 'Yes' : 'No' }}</span>
+        </div>
+        <div class="info-item">
+          <strong>Account Created:</strong>
+          <span>{{ user.metadata.creationTime | date:'medium' }}</span>
+        </div>
+        <div class="info-item">
+          <strong>Last Sign In:</strong>
+          <span>{{ user.metadata.lastSignInTime | date:'medium' }}</span>
+        </div>
+      </div>
+
+      <button (click)="onLogout()" class="btn-logout">Logout</button>
+    </div>
+
+    <ng-template #noUser>
+      <div class="no-user">
+        <p>No user logged in. Redirecting to login...</p>
+      </div>
+    </ng-template>
+  </div>
+</div>
+

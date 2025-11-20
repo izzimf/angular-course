@@ -21,12 +21,16 @@
     <p class="error-message">{{ error }}</p>
   </div>
 
-  <div *ngIf="!isLoading && !error" class="items-grid">
+  <!-- Show items grid when loaded and we have items -->
+  <div *ngIf="!isLoading && !error && items.length > 0" class="items-grid">
     <app-item-card *ngFor="let item of items" [item]="item"></app-item-card>
   </div>
 
+  <!-- Show empty state when loaded but no items (and no error from search) -->
   <div *ngIf="!isLoading && !error && items.length === 0" class="empty-state">
     <p>No items available. Try adjusting your search.</p>
   </div>
 </div>
+
+
 

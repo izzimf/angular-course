@@ -56,3 +56,14 @@
   color: #fff;
 }
 
+.logout-link {
+  cursor: pointer;
+}
+
+.logout-link:hover {
+  background-color: #d7f300;
+  color: #fff;
+}
+
+
+

@@ -33,18 +33,35 @@ export class ItemsService {
   constructor(private http: HttpClient) {}
 
   getItems(query?: string, page: number = 0, limit: number = 20): Observable<ItemsResponse> {
-    let params = new HttpParams();
-    
-    if (query && query.trim()) {
-      params = params.set('q', query.trim());
+    // If no query, use the regular products endpoint
+    if (!query || !query.trim()) {
+      const params = new HttpParams()
+        .set('skip', (page * limit).toString())
+        .set('limit', limit.toString());
+      
+      console.log('Fetching items from:', this.apiUrl, 'with params:', params.toString());
+      
+      return this.http.get<ItemsResponse>(this.apiUrl, { params }).pipe(
+        catchError((error) => {
+          console.error('Error fetching items from API:', error);
+          console.error('Error status:', error.status);
+          console.error('Error message:', error.message);
+          return of({ products: [], total: 0, skip: 0, limit: 0 } as ItemsResponse);
+        })
+      );
     }
     
-    params = params.set('skip', (page * limit).toString());
-    params = params.set('limit', limit.toString());
+    // If query exists, use the search endpoint
+    const params = new HttpParams()
+      .set('q', query.trim())
+      .set('skip', (page * limit).toString())
+      .set('limit', limit.toString());
 
+    console.log('Searching items with query:', query, 'from:', `${this.apiUrl}/search`);
+    
     return this.http.get<ItemsResponse>(`${this.apiUrl}/search`, { params }).pipe(
       catchError((error) => {
-        console.error('Error fetching items:', error);
+        console.error('Error searching items:', error);
         return of({ products: [], total: 0, skip: 0, limit: 0 } as ItemsResponse);
       })
     );
@@ -59,4 +76,6 @@ export class ItemsService {
     );
   }
 }
+
+
 

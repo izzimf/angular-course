@@ -5,8 +5,21 @@
       <li><a routerLink="/" routerLinkActive="active" [routerLinkActiveOptions]="{exact: true}">Home</a></li>
       <li><a routerLink="/about" routerLinkActive="active">About</a></li>
       <li><a routerLink="/items" routerLinkActive="active">Items</a></li>
-      <li><a routerLink="/login" routerLinkActive="active">Login</a></li>
+      
+      <!-- Show Login/Signup when not logged in -->
+      <ng-container *ngIf="user$ | async as user; else notLoggedIn">
+        <li><a routerLink="/profile" routerLinkActive="active">Profile</a></li>
+        <li><a (click)="onLogout()" class="logout-link">Logout</a></li>
+      </ng-container>
+      
+      <!-- Show Profile/Logout when logged in -->
+      <ng-template #notLoggedIn>
+        <li><a routerLink="/login" routerLinkActive="active">Login</a></li>
+        <li><a routerLink="/signup" routerLinkActive="active">Signup</a></li>
+      </ng-template>
     </ul>
   </div>
 </nav>
+
+
 

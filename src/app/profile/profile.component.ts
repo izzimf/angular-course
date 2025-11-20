@@ -6,15 +6,15 @@ import { User } from 'firebase/auth';
 import { Observable } from 'rxjs';
 
 @Component({
-  selector: 'app-navbar',
+  selector: 'app-profile',
   standalone: true,
   imports: [CommonModule, RouterModule],
-  templateUrl: './navbar.component.html',
-  styleUrl: './navbar.component.css'
+  templateUrl: './profile.component.html',
+  styleUrl: './profile.component.css'
 })
-export class NavbarComponent implements OnInit {
+export class ProfileComponent implements OnInit {
   user$: Observable<User | null>;
-  isMenuOpen = false;
+  isLoading = true;
 
   constructor(
     private authService: AuthService,
@@ -23,7 +23,14 @@ export class NavbarComponent implements OnInit {
     this.user$ = this.authService.currentUser$;
   }
 
-  ngOnInit() {}
+  ngOnInit() {
+    this.user$.subscribe(user => {
+      this.isLoading = false;
+      if (!user) {
+        this.router.navigate(['/login']);
+      }
+    });
+  }
 
   async onLogout() {
     try {
@@ -34,6 +41,4 @@ export class NavbarComponent implements OnInit {
     }
   }
 }
-
-
 

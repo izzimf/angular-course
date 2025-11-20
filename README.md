@@ -1,6 +1,12 @@
-# Angularcoursekbtu
+# Angular Course App
 
 This project was generated with [Angular CLI](https://github.com/angular/angular-cli) version 17.2.2.
+
+## Firebase Configuration
+
+Firebase configuration is stored in `src/environments/environment.ts` and `src/environments/environment.development.ts`.
+
+**Note:** The Firebase config should only be in the environment files, not in README.md or any other file.
 
 ## Development server
 
