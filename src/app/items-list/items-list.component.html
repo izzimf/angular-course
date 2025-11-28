@@ -12,24 +12,27 @@
     </div>
   </div>
 
-  <div *ngIf="isLoading" class="loading-container">
+  <div *ngIf="listLoading$ | async" class="loading-container">
     <div class="spinner"></div>
     <p>Loading items...</p>
   </div>
 
-  <div *ngIf="error && !isLoading" class="error-container">
+  <div *ngIf="(listError$ | async) as error" class="error-container">
     <p class="error-message">{{ error }}</p>
   </div>
 
-  <!-- Show items grid when loaded and we have items -->
-  <div *ngIf="!isLoading && !error && items.length > 0" class="items-grid">
-    <app-item-card *ngFor="let item of items" [item]="item"></app-item-card>
-  </div>
-
-  <!-- Show empty state when loaded but no items (and no error from search) -->
-  <div *ngIf="!isLoading && !error && items.length === 0" class="empty-state">
-    <p>No items available. Try adjusting your search.</p>
-  </div>
+  <ng-container *ngIf="!(listLoading$ | async) && !(listError$ | async)">
+    <ng-container *ngIf="items$ | async as items">
+      <div *ngIf="items.length > 0; else noItems" class="items-grid">
+        <app-item-card *ngFor="let item of items" [item]="item"></app-item-card>
+      </div>
+      <ng-template #noItems>
+        <div class="empty-state">
+          <p>No items available. Try adjusting your search.</p>
+        </div>
+      </ng-template>
+    </ng-container>
+  </ng-container>
 </div>
 
 

@@ -1,7 +1,15 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnDestroy, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { ActivatedRoute, Router, RouterModule } from '@angular/router';
-import { ItemsService, Item } from '../items.service';
+import { Item } from '../items.service';
+import { Observable, Subscription } from 'rxjs';
+import { Store } from '@ngrx/store';
+import {
+  selectSelectedItem,
+  selectItemLoading,
+  selectItemError
+} from '../items/state/items.selectors';
+import { loadItem } from '../items/state/items.actions';
 
 @Component({
   selector: 'app-item-details',
@@ -10,49 +18,34 @@ import { ItemsService, Item } from '../items.service';
   templateUrl: './item-details.component.html',
   styleUrl: './item-details.component.css'
 })
-export class ItemDetailsComponent implements OnInit {
-  item: Item | null = null;
-  isLoading = false;
-  error: string | null = null;
-  notFound = false;
+export class ItemDetailsComponent implements OnInit, OnDestroy {
+  item$: Observable<Item | null>;
+  detailsLoading$: Observable<boolean>;
+  detailsError$: Observable<string | null>;
+  private subscriptions = new Subscription();
 
   constructor(
     private route: ActivatedRoute,
     private router: Router,
-    private itemsService: ItemsService
-  ) {}
-
-  ngOnInit() {
-    this.route.paramMap.subscribe(params => {
-      const id = params.get('id');
-      if (id) {
-        this.loadItem(id);
-      } else {
-        this.notFound = true;
-      }
-    });
+    private store: Store
+  ) {
+    this.item$ = this.store.select(selectSelectedItem);
+    this.detailsLoading$ = this.store.select(selectItemLoading);
+    this.detailsError$ = this.store.select(selectItemError);
   }
 
-  private loadItem(id: string) {
-    this.isLoading = true;
-    this.error = null;
-    this.notFound = false;
-
-    this.itemsService.getItemById(id).subscribe({
-      next: (item) => {
-        this.item = item;
-        this.isLoading = false;
-      },
-      error: (err) => {
-        this.isLoading = false;
-        if (err.status === 404) {
-          this.notFound = true;
-        } else {
-          this.error = 'Failed to load item details. Please try again later.';
-        }
-        console.error('Error loading item:', err);
+  ngOnInit() {
+    const sub = this.route.paramMap.subscribe(params => {
+      const id = params.get('id');
+      if (id) {
+        this.store.dispatch(loadItem({ id }));
       }
     });
+    this.subscriptions.add(sub);
+  }
+
+  ngOnDestroy(): void {
+    this.subscriptions.unsubscribe();
   }
 
   goBack() {

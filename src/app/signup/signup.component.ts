@@ -44,7 +44,7 @@ export class SignupComponent {
 
     try {
       console.log('Starting signup process...');
-      // Remove timeout - let Firebase handle its own timeout
+      
       const result = await this.authService.signup(this.email, this.password);
       console.log('Signup successful, navigating to profile...');
       this.isLoading = false;
@@ -57,7 +57,7 @@ export class SignupComponent {
       } else if (error?.message) {
         this.error = error.message;
       } else if (error?.code) {
-        // Handle Firebase error codes
+       
         this.error = error.message || 'Signup failed. Please try again.';
       } else {
         this.error = 'Signup failed. Please try again.';

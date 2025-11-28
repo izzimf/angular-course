@@ -1,11 +1,18 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnDestroy, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { Router, ActivatedRoute, RouterModule } from '@angular/router';
-import { ItemsService, Item } from '../items.service';
+import { Item } from '../items.service';
 import { ItemCardComponent } from '../item-card/item-card.component';
-import { debounceTime, distinctUntilChanged, switchMap } from 'rxjs/operators';
-import { Subject } from 'rxjs';
+import { Subject, Subscription, Observable } from 'rxjs';
+import { debounceTime, distinctUntilChanged } from 'rxjs/operators';
+import { Store } from '@ngrx/store';
+import { loadItems } from '../items/state/items.actions';
+import {
+  selectItemsList,
+  selectItemsLoading,
+  selectItemsError
+} from '../items/state/items.selectors';
 
 @Component({
   selector: 'app-items-list',
@@ -14,43 +21,50 @@ import { Subject } from 'rxjs';
   templateUrl: './items-list.component.html',
   styleUrl: './items-list.component.css'
 })
-export class ItemsListComponent implements OnInit {
-  items: Item[] = [];
-  isLoading = false;
-  error: string | null = null;
+export class ItemsListComponent implements OnInit, OnDestroy {
+  items$: Observable<Item[]>;
+  listLoading$: Observable<boolean>;
+  listError$: Observable<string | null>;
   searchQuery = '';
   private searchSubject = new Subject<string>();
+  private subscriptions = new Subscription();
 
   constructor(
-    private itemsService: ItemsService,
     private route: ActivatedRoute,
-    private router: Router
-  ) {}
+    private router: Router,
+    private store: Store
+  ) {
+    this.items$ = this.store.select(selectItemsList);
+    this.listLoading$ = this.store.select(selectItemsLoading);
+    this.listError$ = this.store.select(selectItemsError);
+  }
 
   ngOnInit() {
-    // Load items immediately on component init
-    this.route.queryParams.subscribe(params => {
+    const paramsSub = this.route.queryParams.subscribe((params) => {
       const query = params['q'] || '';
       this.searchQuery = query;
-      this.loadItems(query);
+      this.dispatchLoad(query);
     });
+    this.subscriptions.add(paramsSub);
 
-    // Setup debounced search
-    this.searchSubject.pipe(
-      debounceTime(500),
-      distinctUntilChanged()
-    ).subscribe(query => {
-      this.updateQueryParam(query);
-    });
-    
-    // Ensure items load even if no query params
+    const searchSub = this.searchSubject
+      .pipe(debounceTime(500), distinctUntilChanged())
+      .subscribe((query) => {
+        this.updateQueryParam(query);
+      });
+    this.subscriptions.add(searchSub);
+
     if (!this.route.snapshot.queryParams['q']) {
-      this.loadItems('');
+      this.dispatchLoad('');
     }
   }
 
   onSearchChange(value: string) {
     this.searchSubject.next(value);
+  }
+
+  ngOnDestroy(): void {
+    this.subscriptions.unsubscribe();
   }
 
   private updateQueryParam(query: string) {
@@ -62,48 +76,9 @@ export class ItemsListComponent implements OnInit {
     });
   }
 
-  private loadItems(query: string = '') {
-    this.isLoading = true;
-    this.error = null;
-    console.log('=== LOADING ITEMS ===');
-    console.log('Query:', query || '(empty)');
-    console.log('Current items:', this.items.length);
-
-    this.itemsService.getItems(query, 0, 20).subscribe({
-      next: (response) => {
-        console.log('=== ITEMS RESPONSE ===');
-        console.log('Full response:', response);
-        console.log('Response has products:', !!response?.products);
-        console.log('Number of products:', response?.products?.length || 0);
-        console.log('First product:', response?.products?.[0]);
-        
-        // Ensure we have a valid response
-        if (response && response.products) {
-          this.items = response.products;
-          console.log('Items assigned successfully:', this.items.length);
-        } else {
-          console.warn('Invalid response structure:', response);
-          this.items = [];
-        }
-        
-        this.isLoading = false;
-        console.log('Final items count:', this.items.length);
-        
-        // Only set error if we have a search query and no results
-        if (this.items.length === 0 && query && query.trim()) {
-          this.error = 'No items found matching your search.';
-        }
-      },
-      error: (err) => {
-        console.error('=== ERROR LOADING ITEMS ===');
-        console.error('Error object:', err);
-        console.error('Error status:', err?.status);
-        console.error('Error message:', err?.message);
-        this.error = 'Failed to load items. Please try again later.';
-        this.isLoading = false;
-        this.items = [];
-      }
-    });
+  private dispatchLoad(query: string = '') {
+    this.store.dispatch(loadItems({ query }));
   }
 }
+
 

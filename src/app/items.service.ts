@@ -1,8 +1,7 @@
 import { Injectable } from '@angular/core';
 import { HttpClient, HttpParams } from '@angular/common/http';
-import { Observable } from 'rxjs';
-import { catchError } from 'rxjs/operators';
-import { of } from 'rxjs';
+import { Observable, of } from 'rxjs';
+import { catchError, map } from 'rxjs/operators';
 
 export interface Item {
   id: number;
@@ -19,7 +18,7 @@ export interface Item {
   images: string[];
 }
 
-export interface ItemsResponse {
+interface ItemsResponse {
   products: Item[];
   total: number;
   skip: number;
@@ -32,21 +31,24 @@ export class ItemsService {
 
   constructor(private http: HttpClient) {}
 
-  getItems(query?: string, page: number = 0, limit: number = 20): Observable<ItemsResponse> {
+  getItems(query?: string): Observable<Item[]> {
+    const limit = 20;
+    const skip = 0;
     // If no query, use the regular products endpoint
     if (!query || !query.trim()) {
       const params = new HttpParams()
-        .set('skip', (page * limit).toString())
+        .set('skip', skip.toString())
         .set('limit', limit.toString());
       
       console.log('Fetching items from:', this.apiUrl, 'with params:', params.toString());
       
       return this.http.get<ItemsResponse>(this.apiUrl, { params }).pipe(
+        map((response) => response.products ?? []),
         catchError((error) => {
           console.error('Error fetching items from API:', error);
           console.error('Error status:', error.status);
           console.error('Error message:', error.message);
-          return of({ products: [], total: 0, skip: 0, limit: 0 } as ItemsResponse);
+          return of([]);
         })
       );
     }
@@ -54,15 +56,16 @@ export class ItemsService {
     // If query exists, use the search endpoint
     const params = new HttpParams()
       .set('q', query.trim())
-      .set('skip', (page * limit).toString())
+      .set('skip', skip.toString())
       .set('limit', limit.toString());
 
     console.log('Searching items with query:', query, 'from:', `${this.apiUrl}/search`);
     
     return this.http.get<ItemsResponse>(`${this.apiUrl}/search`, { params }).pipe(
+      map((response) => response.products ?? []),
       catchError((error) => {
         console.error('Error searching items:', error);
-        return of({ products: [], total: 0, skip: 0, limit: 0 } as ItemsResponse);
+        return of([]);
       })
     );
   }

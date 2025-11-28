@@ -1,24 +1,28 @@
 <div class="item-details-container">
   <button (click)="goBack()" class="back-button">← Back to Items</button>
 
-  <div *ngIf="isLoading" class="loading-container">
+  <div *ngIf="detailsLoading$ | async" class="loading-container">
     <div class="spinner"></div>
     <p>Loading item details...</p>
   </div>
 
-  <div *ngIf="notFound && !isLoading" class="not-found-container">
-    <h2>Item Not Found</h2>
-    <p>The item you're looking for doesn't exist.</p>
-    <button (click)="goBack()" class="btn-primary">Go Back</button>
-  </div>
+  <ng-container *ngIf="(detailsError$ | async) as error">
+    <div *ngIf="error === 'NOT_FOUND'; else generalError" class="not-found-container">
+      <h2>Item Not Found</h2>
+      <p>The item you're looking for doesn't exist.</p>
+      <button (click)="goBack()" class="btn-primary">Go Back</button>
+    </div>
+    <ng-template #generalError>
+      <div class="error-container" *ngIf="error && error !== 'NOT_FOUND'">
+        <h2>Error</h2>
+        <p class="error-message">{{ error }}</p>
+        <button (click)="goBack()" class="btn-primary">Go Back</button>
+      </div>
+    </ng-template>
+  </ng-container>
 
-  <div *ngIf="error && !isLoading && !notFound" class="error-container">
-    <h2>Error</h2>
-    <p class="error-message">{{ error }}</p>
-    <button (click)="goBack()" class="btn-primary">Go Back</button>
-  </div>
-
-  <div *ngIf="item && !isLoading" class="item-details">
+  <ng-container *ngIf="(item$ | async) as item">
+    <div class="item-details">
     <div class="item-images">
       <div class="main-image">
         <img [src]="item.thumbnail" [alt]="item.title" />
@@ -88,6 +92,7 @@
         </div>
       </div>
     </div>
-  </div>
+    </div>
+  </ng-container>
 </div>
 
